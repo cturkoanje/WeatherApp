@@ -36,6 +36,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends ListActivity implements OnMapReadyCallback {
 
@@ -52,6 +53,10 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
     private LatLng currentLocation = null;
 
     ArrayList<HashMap<String,String>> weatherData;
+
+    private List<DailyForecastObject> weatherList = new ArrayList<DailyForecastObject>();
+    private WeatherListAdapter newAdapter;
+
     Toolbar toolbar;
 
     @Override
@@ -94,9 +99,9 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
         return super.onOptionsItemSelected(item);
     }
 
-    public static Drawable LoadImageFromWebOperations(String url) {
+    public static Drawable loadImageFromIcon(String icon) {
         try {
-            InputStream is = (InputStream) new URL(url).getContent();
+            InputStream is = (InputStream) new URL("http://openweathermap.org/img/w/" + icon + ".png").getContent();
             Drawable d = Drawable.createFromStream(is, "src name");
             return d;
         } catch (Exception e) {
@@ -105,7 +110,7 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
     }
 
     private String getURLForZip(String zipCode) {
-        return "http://api.openweathermap.org/data/2.5/forecast/daily?zip=" + zipCode + ",us&units=imperial&APPID=c59c8be06eb651401da3f4e32aa4371e";
+        return "http://api.openweathermap.org/data/2.5/forecast/daily?zip=" + zipCode + ",us&units=imperial&APPID=c59c8be06eb651401da3f4e32aa4371e&cnt=10";
     }
 
     @Override
@@ -128,7 +133,7 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
 
         public GetWeatherData() {
             super();
-            dataURL = "http://api.openweathermap.org/data/2.5/forecast/daily?zip=11530,us&units=imperial&APPID=c59c8be06eb651401da3f4e32aa4371e";
+            dataURL = getURLForZip("11530");
         }
 
         @Override
@@ -228,6 +233,8 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
 
                         HashMap<String, String>day = new HashMap<String, String>();
 
+                        weatherList.add(new DailyForecastObject(weather.getJSONObject(i)));
+
                         JSONObject dayDetail = weather.getJSONObject(i);
                         JSONObject temp = dayDetail.getJSONObject("temp");
                         JSONObject desc = dayDetail.getJSONArray("weather").getJSONObject(0);
@@ -259,7 +266,10 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
                     new String[] { TAG_TEMP, TAG_TEMP_MIN, TAG_TEMP_MAX, TAG_DESCRIPTION },
                     new int[] { R.id.temperature, R.id.min, R.id.max, R.id.description });
 
-            setListAdapter(adapter);
+
+            newAdapter = new WeatherListAdapter(MainActivity.this, weatherList);
+
+            setListAdapter(newAdapter);
         }
     }
 }

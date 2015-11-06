@@ -7,60 +7,88 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp" >
 
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="8dp" />
 
-    <TextView
-        android:id="@+id/temp_lbl"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Day Temp: " />
+        android:layout_toRightOf="@id/thumbnail">
 
-    <TextView
-        android:id="@+id/temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/temp_lbl" />
+        <TextView
+            android:id="@+id/temperature"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:textSize="35dp"
+            android:text="TEMP"
+            android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/min_temp_lbl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Min Temp: "
-        android:layout_below="@id/temp_lbl"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:id="@+id/minMaxContainer"
+            android:layout_toRightOf="@id/temperature"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
-    <TextView
-        android:id="@+id/min"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/min_temp_lbl"
-        android:layout_below="@id/temp_lbl"/>
+            <TextView
+                android:id="@+id/minLabel"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:text="Min: "/>
 
-    <TextView
-        android:id="@+id/max_temp_lbl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="   Max Temp: "
-        android:layout_toRightOf="@id/min"
-        android:layout_below="@id/temp_lbl"/>
+            <TextView
+                android:id="@+id/min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/minLabel"
+                android:text="MIN"/>
 
-    <TextView
-        android:id="@+id/max"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/max_temp_lbl"
-        android:layout_below="@id/temp_lbl"/>
+            <TextView
+                android:id="@+id/maxLabel"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/min"
+                android:text="Max: "/>
 
-    <TextView
-        android:id="@+id/dsr_lbl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Description: "
-        android:layout_below="@id/min_temp_lbl" />
+            <TextView
+                android:id="@+id/max"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/min"
+                android:layout_toRightOf="@id/maxLabel"
+                android:text="MAX"/>
 
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/min_temp_lbl"
-        android:layout_toRightOf="@id/dsr_lbl" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:id="@+id/leftContainer"
+            android:gravity="center_vertical"
+            android:layout_toRightOf="@id/minMaxContainer">
+
+            <TextView
+                android:id="@+id/dayLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:text="DAY" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:layout_below="@id/dayLabel" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>
