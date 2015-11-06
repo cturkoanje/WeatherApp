@@ -220,6 +220,8 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
 
                     currentLocation = new LatLng(lat, lng);
 
+                    weatherList.clear();
+
                     if(map != null) {
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 13));
                     }
