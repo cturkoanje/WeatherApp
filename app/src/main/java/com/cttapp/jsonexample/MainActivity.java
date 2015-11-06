@@ -1,6 +1,8 @@
 package com.cttapp.jsonexample;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,6 +59,8 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
     private List<DailyForecastObject> weatherList = new ArrayList<DailyForecastObject>();
     private WeatherListAdapter newAdapter;
 
+    private ProgressDialog ringProgressDialog;
+
     Toolbar toolbar;
 
     @Override
@@ -67,6 +71,7 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
         weatherData = new ArrayList<HashMap<String, String>>();
 
         // create a new AsyncTask
+        ringProgressDialog = ProgressDialog.show(MainActivity.this, "Please wait ...", "Loading Weather Data", true);
         new GetWeatherData(getURLForZip("11554")).execute();
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
@@ -74,29 +79,24 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setTitle("Weather");
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        toolbar.setOnMenuItemClickListener(
+                new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+                        int id = item.getItemId();
+                        if (id == R.id.search) {
+                            Intent intent = new Intent(MainActivity.this, CitySearch.class);
+                            startActivityForResult(intent, 1);
+                            return true;
+                        }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+                        return true;
+                    }
+                });
     }
 
     public static Drawable loadImageFromIcon(String icon) {
@@ -111,6 +111,22 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
 
     private String getURLForZip(String zipCode) {
         return "http://api.openweathermap.org/data/2.5/forecast/daily?zip=" + zipCode + ",us&units=imperial&APPID=c59c8be06eb651401da3f4e32aa4371e&cnt=10";
+    }
+
+    private String getUrlForLatLng(String point) {
+        return "http://api.openweathermap.org/data/2.5/forecast/daily?" + point + "&units=imperial&APPID=c59c8be06eb651401da3f4e32aa4371e&cnt=10";
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                String location = data.getStringExtra("location");
+                String city = data.getStringExtra("city");
+                ringProgressDialog = ProgressDialog.show(MainActivity.this, "Please wait ...", "Loading Weather Data for " + city, true);
+                new GetWeatherData(getUrlForLatLng(location)).execute();
+            }
+        }
     }
 
     @Override
@@ -255,6 +271,8 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                ringProgressDialog.dismiss();
             }
             else {
                 Log.d("DATA", "No data received");
