@@ -60,6 +60,7 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
     private WeatherListAdapter newAdapter;
 
     private ProgressDialog ringProgressDialog;
+    private String lastURL;
 
     Toolbar toolbar;
 
@@ -72,7 +73,18 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
 
         // create a new AsyncTask
         ringProgressDialog = ProgressDialog.show(MainActivity.this, "Please wait ...", "Loading Weather Data", true);
-        new GetWeatherData(getURLForZip("11554")).execute();
+
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            lastURL = savedInstanceState.getString("LASTURL");
+            new GetWeatherData(lastURL).execute();
+        }
+        else
+        {
+            new GetWeatherData(getURLForZip("11554")).execute();
+            lastURL = getURLForZip("11554");
+        }
+
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -124,9 +136,16 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
                 String location = data.getStringExtra("location");
                 String city = data.getStringExtra("city");
                 ringProgressDialog = ProgressDialog.show(MainActivity.this, "Please wait ...", "Loading Weather Data for " + city, true);
-                new GetWeatherData(getUrlForLatLng(location)).execute();
+                lastURL = getUrlForLatLng(location);
+                new GetWeatherData(lastURL).execute();
             }
         }
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString("LASTURL", lastURL);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -150,6 +169,7 @@ public class MainActivity extends ListActivity implements OnMapReadyCallback {
         public GetWeatherData() {
             super();
             dataURL = getURLForZip("11530");
+            lastURL = dataURL;
         }
 
         @Override
